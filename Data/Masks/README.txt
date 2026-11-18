@@ -1,0 +1,1 @@
+Mặt nạ nhị phân 0/1 lưu cố định cho các thí nghiệm

@@ -1,0 +1,3 @@
+laplace_model.py: Trích xuất danh sách tọa độ unknown_pixels, lắp ráp ma trận hệ số thưa A (dạng CSR) và vế phải b từ quy tắc trung bình 4 lân cận, khởi tạo x_0 và giải nghiệm tham chiếu bằng spsolve.
+gauss_seidel.py: Cài đặt thuật toán lặp Gauss–Seidel cập nhật trực tiếp trên cấu trúc mảng CSR (indptr, indices, data), trả về nghiệm x, số bước lặp, lịch sử phần dư và hội tụ.
+evaluation.py: Cung cấp các hàm tính phần dư tương đối theo chuẩn vô cùng, độ lệch so với nghiệm tham chiếu spsolve, và các chỉ số MSE_mask, PSNR_mask chỉ tính trên vùng khuyết.

@@ -1,0 +1,1 @@
+Lưu trữ có cấu trúc toàn bộ sản phẩm đầu ra từ Notebook gồm ảnh trước/sau khôi phục (restored_images/), bảng số liệu .csv (tables/) và đồ thị hội tụ (plots/).

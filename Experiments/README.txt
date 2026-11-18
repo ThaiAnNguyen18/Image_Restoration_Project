@@ -1,0 +1,1 @@
+Notebook điều phối toàn bộ quy trình: gọi các module trong src/, thực thi 3 thí nghiệm (TN1, TN2, TN3), bấm giờ bằng time.perf_counter() (lấy trung vị 5 lần chạy) và xuất kết quả.

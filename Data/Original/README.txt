@@ -1,0 +1,1 @@
+Ảnh gốc chuẩn PNG 256x256 (chỉ đọc, không ghi đè)
