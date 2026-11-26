@@ -1,5 +1,11 @@
+import os
+import tempfile
+
 import numpy as np
+from PIL import Image
+
 from src.mask import create_square_mask, create_scratch_mask
+from src.image_processing import load_grayscale, save_image, restore_pixels
 
 
 def test_square_mask():
@@ -32,9 +38,39 @@ def test_edge_guard():
             pass
 
 
+def test_load_grayscale_rgb():
+    p = os.path.join(tempfile.mkdtemp(), "rgb.png")
+    Image.fromarray(np.full((8, 8, 3), 200, np.uint8)).save(p)
+    a = load_grayscale(p)
+    assert a.dtype == np.float64 and a.shape == (8, 8)
+    assert 0.0 <= a.min() and a.max() <= 255.0
+    assert np.allclose(a, 200.0)   # RGB(200,200,200) -> L = 200
+
+
+def test_save_image_clips_and_rounds():
+    p = os.path.join(tempfile.mkdtemp(), "out.png")
+    save_image(np.array([[-10.0, 127.6], [300.0, 255.4]]), p)
+    b = np.asarray(Image.open(p))
+    assert b.dtype == np.uint8
+    assert b.flatten().tolist() == [0, 128, 255, 255]
+
+
+def test_restore_pixels():
+    img = np.arange(16, dtype=np.float64).reshape(4, 4)
+    img_orig = img.copy()
+    mask = create_square_mask((4, 4), 1, 1, 2)
+    unknown = np.argwhere(mask == 1)
+    x = np.array([99.0, 98.0, 97.0, 96.0])
+    out = restore_pixels(img, mask, unknown, x)
+    assert np.allclose(out[mask == 1], x)                 # đúng thứ tự argwhere
+    assert np.allclose(out[mask == 0], img[mask == 0])    # giữ vùng ngoài
+    assert np.allclose(img, img_orig)                     # không đổi ảnh gốc
+
+
 def run_tests():
     test_square_mask(); test_scratch_mask(); test_edge_guard()
-    print("ALL MASK TESTS PASSED!")
+    test_load_grayscale_rgb(); test_save_image_clips_and_rounds(); test_restore_pixels()
+    print("ALL IMAGE/MASK TESTS PASSED!")
 
 
 if __name__ == "__main__":
