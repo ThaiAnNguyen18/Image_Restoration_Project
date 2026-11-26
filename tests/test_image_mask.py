@@ -67,9 +67,32 @@ def test_restore_pixels():
     assert np.allclose(img, img_orig)                     # không đổi ảnh gốc
 
 
+def test_images_smooth_vs_edges():
+    i1 = load_grayscale("data/original/image1_smooth_256.png")
+    i2 = load_grayscale("data/original/image2_edges_256.png")
+    for a in (i1, i2):
+        assert a.dtype == np.float64 and a.shape == (256, 256)
+    d1 = np.abs(np.diff(i1, axis=0)).max(), np.abs(np.diff(i1, axis=1)).max()
+    assert max(d1) < 10                          # ảnh 1 gần như phẳng từng pixel
+    e2 = (np.abs(np.diff(i2, axis=0)) > 50).sum() + (np.abs(np.diff(i2, axis=1)) > 50).sum()
+    assert e2 >= 500                             # ảnh 2 nhiều rìa sắc nét
+
+
+def test_tn1_masks_fixed():
+    specs = [("mask_2x50.npy", 100, (slice(127, 129), slice(103, 153))),
+             ("mask_10x10.npy", 100, (slice(123, 133), slice(123, 133))),
+             ("mask_30x30.npy", 900, (slice(113, 143), slice(113, 143)))]
+    for name, n, region in specs:
+        m = np.load(f"data/masks/{name}")
+        assert m.dtype == np.uint8 and m.shape == (256, 256)
+        assert set(np.unique(m).tolist()) <= {0, 1} and m.sum() == n
+        assert m[region].sum() == n               # đúng vị trí căn giữa, lệch 1 pixel cũng fail
+
+
 def run_tests():
     test_square_mask(); test_scratch_mask(); test_edge_guard()
     test_load_grayscale_rgb(); test_save_image_clips_and_rounds(); test_restore_pixels()
+    test_images_smooth_vs_edges(); test_tn1_masks_fixed()
     print("ALL IMAGE/MASK TESTS PASSED!")
 
 
