@@ -39,7 +39,7 @@
 **Interfaces:**
 - Produces (Task 3 dùng lại): `create_square_mask(shape: tuple, row: int, col: int, size: int) -> np.ndarray` và `create_scratch_mask(shape: tuple, row: int, col: int, height: int, width: int) -> np.ndarray` — trả `uint8` 0/1 đúng `shape`, vùng 1 nằm tại `[row:row+h, col:col+w]`, ném `ValueError` nếu `row < 1 or col < 1 or row+h > H-1 or col+w > W-1`.
 
-- [ ] **Step 1: Tạo venv và cài dependencies theo README**
+- [x] **Step 1: Tạo venv và cài dependencies theo README**
 
 ```powershell
 python -m venv .venv
@@ -48,7 +48,7 @@ python -m venv .venv
 ```
 Expected: in `env ok` (không lỗi import).
 
-- [ ] **Step 2: Viết test thất bại cho mask**
+- [x] **Step 2: Viết test thất bại cho mask**
 
 Thêm vào `tests/test_image_mask.py` (pattern y hệt `test_2x2.py`: hàm `run_tests()` + in kết quả, `if __name__ == "__main__"`):
 
@@ -91,21 +91,21 @@ if __name__ == "__main__":
     run_tests()
 ```
 
-- [ ] **Step 3: Chạy test để xác nhận thất bại**
+- [x] **Step 3: Chạy test để xác nhận thất bại**
 
 Run: `.venv\Scripts\python.exe -m tests.test_image_mask`
 Expected: FAIL với `NotImplementedError` ("Sơn triển khai ở Tuần 2.").
 
-- [ ] **Step 4: Triển khai 2 hàm trong `src/mask.py`**
+- [x] **Step 4: Triển khai 2 hàm trong `src/mask.py`**
 
 Giữ nguyên docstring có sẵn. Body: cấp phát `np.zeros(shape, dtype=np.uint8)`, kiểm tra 4 điều kiện khoảng cách mép (ném `ValueError` kèm thông tin vi phạm), ghi `1` vào lát cắt tương ứng. Không sửa signature.
 
-- [ ] **Step 5: Chạy test để xác nhận đạt**
+- [x] **Step 5: Chạy test để xác nhận đạt**
 
 Run: `.venv\Scripts\python.exe -m tests.test_image_mask`
 Expected: `ALL MASK TESTS PASSED!`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add src/mask.py tests/test_image_mask.py
@@ -124,7 +124,7 @@ git commit -m "feat: implement mask creation with edge guard and tests"
 - Consumes: `create_square_mask` (Task 1).
 - Produces: `load_grayscale(path: str) -> np.ndarray` (2D float64 [0,255]), `restore_pixels(image: np.ndarray, mask: np.ndarray, unknown_pixels: np.ndarray, x: np.ndarray) -> np.ndarray` (bản sao đã điền x), `save_image(image: np.ndarray, path: str) -> None`. Task 3 sẽ dùng `load_grayscale` và `save_image`.
 
-- [ ] **Step 1: Viết test thất bại (append vào file test)**
+- [x] **Step 1: Viết test thất bại (append vào file test)**
 
 ```python
 import os, tempfile
@@ -160,23 +160,23 @@ def test_restore_pixels():
 
 Thêm `test_load_grayscale_rgb(); test_save_image_clips_and_rounds(); test_restore_pixels()` vào `run_tests()`.
 
-- [ ] **Step 2: Chạy test để xác nhận thất bại**
+- [x] **Step 2: Chạy test để xác nhận thất bại**
 
 Run: `.venv\Scripts\python.exe -m tests.test_image_mask`
 Expected: FAIL với `NotImplementedError`.
 
-- [ ] **Step 3: Triển khai 3 hàm trong `src/image_processing.py`**
+- [x] **Step 3: Triển khai 3 hàm trong `src/image_processing.py`**
 
 - `load_grayscale`: `Image.open(path).convert("L")` → `np.asarray(..., dtype=np.float64)` (mảng 2D).
 - `restore_pixels`: `out = image.copy()`; điền `x` vào tọa độ `unknown_pixels` (dạng `(n, 2)`), ví dụ `out[unknown_pixels[:, 0], unknown_pixels[:, 1]] = x`; trả `out`.
 - `save_image`: `np.clip` về `[0, 255]` → `np.round` → `astype(np.uint8)` → `Image.fromarray(...).save(path, format="PNG")`.
 
-- [ ] **Step 4: Chạy test để xác nhận đạt**
+- [x] **Step 4: Chạy test để xác nhận đạt**
 
 Run: `.venv\Scripts\python.exe -m tests.test_image_mask`
 Expected: PASS toàn bộ (mask + image), in `ALL MASK TESTS PASSED!` (đổi chuỗi in thành `ALL IMAGE/MASK TESTS PASSED!` cho đúng phạm vi).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add src/image_processing.py tests/test_image_mask.py
@@ -198,7 +198,7 @@ git commit -m "feat: implement grayscale load, restore and PNG save"
 - Consumes: `create_square_mask`, `create_scratch_mask` (Task 1), `load_grayscale`, `save_image` (Task 2).
 - Produces: 5 file dữ liệu tĩnh đúng tên trên — các task sau (notebook TN1) chỉ đọc chúng.
 
-- [ ] **Step 1: Viết test thất bại cho dữ liệu (append vào file test)**
+- [x] **Step 1: Viết test thất bại cho dữ liệu (append vào file test)**
 
 ```python
 def test_images_smooth_vs_edges():
@@ -224,12 +224,12 @@ def test_tn1_masks_fixed():
 
 Thêm 2 hàm trên vào `run_tests()`.
 
-- [ ] **Step 2: Chạy test để xác nhận thất bại**
+- [x] **Step 2: Chạy test để xác nhận thất bại**
 
 Run: `.venv\Scripts\python.exe -m tests.test_image_mask`
 Expected: FAIL với `FileNotFoundError` (file chưa tồn tại).
 
-- [ ] **Step 3: Viết `scripts/generate_data.py`**
+- [x] **Step 3: Viết `scripts/generate_data.py`**
 
 Nội dung bắt buộc:
 - Dòng đầu: `sys.path.insert(0, str(Path(__file__).resolve().parents[1]))` (để `import src...` chạy được khi gọi `python scripts/generate_data.py` từ thư mục gốc) + `from src.mask import ...`, `from src.image_processing import save_image`.
@@ -240,19 +240,19 @@ Nội dung bắt buộc:
 - 3 mask: `create_scratch_mask((256,256), 127, 103, 2, 50)`, `create_square_mask((256,256), 123, 123, 10)`, `create_square_mask((256,256), 113, 113, 30)` → `np.save` đúng 3 tên file ở trên.
 - In ra tọa độ, kích thước và `int(m.sum())` của từng mask để đối chiếu.
 
-- [ ] **Step 4: Chạy script rồi chạy test**
+- [x] **Step 4: Chạy script rồi chạy test**
 
 Run: `.venv\Scripts\python.exe scripts/generate_data.py` rồi `.venv\Scripts\python.exe -m tests.test_image_mask`
 Expected: script in 3 dòng summary mask; test in `ALL IMAGE/MASK TESTS PASSED!`.
 
-- [ ] **Step 5: Viết `data/SOURCES.md`**
+- [x] **Step 5: Viết `data/SOURCES.md`**
 
 Nội dung bắt buộc (tiếng Việt, markdown):
 - Bảng nguồn 2 ảnh: **tự sinh** bởi `scripts/generate_data.py`, ngày `2026-11-26`, thông số 256×256, grayscale, PNG 8-bit; khẳng định không dùng tài nguyên bên thứ ba → không có giới hạn bản quyền.
 - Bảng 3 mask TN1: tên file, hình dạng, tọa độ gốc, số pixel khuyết, dạng `.npy` (`uint8` 0/1), sinh cùng script.
 - Ghi chú: nhánh B (ảnh thật từ nguồn công khai, có license) sẽ được bổ sung vào file này khi thực hiện.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add scripts/generate_data.py data/original data/masks data/SOURCES.md tests/test_image_mask.py
@@ -268,22 +268,22 @@ git commit -m "chore: generate fixed 256x256 images and TN1 masks with SOURCES.m
 **Interfaces:**
 - Consumes: toàn bộ kết quả Task 1–3.
 
-- [ ] **Step 1: Chạy bộ test của Sơn**
+- [x] **Step 1: Chạy bộ test của Sơn**
 
 Run: `.venv\Scripts\python.exe -m tests.test_image_mask`
 Expected: `ALL IMAGE/MASK TESTS PASSED!`
 
-- [ ] **Step 2: Chạy test 2x2 của nhóm (kết quả dự kiến)**
+- [x] **Step 2: Chạy test 2x2 của nhóm (kết quả dự kiến)**
 
 Run: `.venv\Scripts\python.exe -m tests.test_2x2`
 Expected: FAIL với `NotImplementedError: An triển khai ở Tuần 2.` tại `build_system` — **đúng dự đoán**, không phải gate hôm nay (đủ 4 người sẽ pass). Ghi nhận kết quả này vào báo cáo cuối ngày.
 
-- [ ] **Step 3: Chạy lại script sinh dữ liệu (tái lập)**
+- [x] **Step 3: Chạy lại script sinh dữ liệu (tái lập)**
 
 Run: `.venv\Scripts\python.exe scripts/generate_data.py` rồi `.venv\Scripts\python.exe -m tests.test_image_mask`
 Expected: vẫn `ALL IMAGE/MASK TESTS PASSED!` (dữ liệu sinh lại vẫn đúng chuẩn).
 
-- [ ] **Step 4: Kiểm tra git sạch**
+- [x] **Step 4: Kiểm tra git sạch**
 
 Run: `git status --short` và `git log --oneline -5`
 Expected: không có thay đổi chưa commit; 4 commit mới trên nhánh `trinhson`.
