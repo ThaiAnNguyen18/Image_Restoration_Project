@@ -89,10 +89,53 @@ def test_tn1_masks_fixed():
         assert m[region].sum() == n               # đúng vị trí căn giữa, lệch 1 pixel cũng fail
 
 
+def test_restore_pixels_guards():
+    img_u8 = np.arange(16, dtype=np.uint8).reshape(4, 4)
+    mask = create_square_mask((4, 4), 1, 1, 2)
+    unknown = np.argwhere(mask == 1)
+    x = np.array([10.5, 11.5, 12.5, 13.5])
+    out = restore_pixels(img_u8, mask, unknown, x)
+    assert out.dtype == np.float64            # ép float64, không cắt phần thập phân
+    assert np.allclose(out[mask == 1], x)     # 10.5 giữ nguyên chứ không thành 10
+    try:
+        restore_pixels(np.zeros((5, 5)), mask, unknown, x)
+        assert False, "phải raise ValueError khi image.shape != mask.shape"
+    except ValueError:
+        pass
+    try:
+        restore_pixels(img_u8.astype(np.float64), mask, unknown, x[:2])
+        assert False, "phải raise ValueError khi len(unknown_pixels) != len(x)"
+    except ValueError:
+        pass
+
+
+def test_save_image_mode_l():
+    p = os.path.join(tempfile.mkdtemp(), "l.png")
+    save_image(np.full((4, 4), 128.0), p)
+    with Image.open(p) as im:
+        assert im.mode == "L"
+
+
+def test_mask_nonpositive_size():
+    bad = [
+        (create_square_mask, ((10, 12), 2, 3, 0)),      # size = 0
+        (create_square_mask, ((10, 12), 2, 3, -2)),     # size < 0
+        (create_scratch_mask, ((10, 12), 4, 1, 0, 6)),  # height = 0
+        (create_scratch_mask, ((10, 12), 4, 1, 2, -1)), # width < 0
+    ]
+    for fn, args in bad:
+        try:
+            fn(*args)
+            assert False, f"phải raise ValueError: {fn.__name__}{args}"
+        except ValueError:
+            pass
+
+
 def run_tests():
     test_square_mask(); test_scratch_mask(); test_edge_guard()
     test_load_grayscale_rgb(); test_save_image_clips_and_rounds(); test_restore_pixels()
     test_images_smooth_vs_edges(); test_tn1_masks_fixed()
+    test_restore_pixels_guards(); test_save_image_mode_l(); test_mask_nonpositive_size()
     print("ALL IMAGE/MASK TESTS PASSED!")
 
 
