@@ -38,18 +38,18 @@ def make_edges_image() -> np.ndarray:
 
 def main() -> None:
     img1 = make_smooth_image()
-    save_image(img1, str(DATA / "original" / "image1_smooth_256.png"))
+    save_image(img1, str(DATA / "original" / "image1_smooth.png"))
     img2 = make_edges_image()
-    save_image(img2, str(DATA / "original" / "image2_edges_256.png"))
-    print(f"image1_smooth_256.png: shape={img1.shape}, dtype={img1.dtype}")
-    print(f"image2_edges_256.png: shape={img2.shape}, dtype={img2.dtype}")
+    save_image(img2, str(DATA / "original" / "image2_edges.png"))
+    print(f"image1_smooth.png: shape={img1.shape}, dtype={img1.dtype}")
+    print(f"image2_edges.png: shape={img2.shape}, dtype={img2.dtype}")
 
     masks = [
-        ("mask_2x50.npy", "scratch 2x50 @ (row=127, col=103)",
+        ("mask_scratch_2x50.npy", "scratch 2x50 @ (row=127, col=103)",
          create_scratch_mask((SIZE, SIZE), 127, 103, 2, 50)),
-        ("mask_10x10.npy", "square 10x10 @ (row=123, col=123)",
+        ("mask_sq_10x10.npy", "square 10x10 @ (row=123, col=123)",
          create_square_mask((SIZE, SIZE), 123, 123, 10)),
-        ("mask_30x30.npy", "square 30x30 @ (row=113, col=113)",
+        ("mask_sq_30x30.npy", "square 30x30 @ (row=113, col=113)",
          create_square_mask((SIZE, SIZE), 113, 113, 30)),
     ]
     for name, desc, mask in masks:

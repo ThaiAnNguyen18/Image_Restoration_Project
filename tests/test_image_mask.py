@@ -68,8 +68,8 @@ def test_restore_pixels():
 
 
 def test_images_smooth_vs_edges():
-    i1 = load_grayscale("data/original/image1_smooth_256.png")
-    i2 = load_grayscale("data/original/image2_edges_256.png")
+    i1 = load_grayscale("data/original/image1_smooth.png")
+    i2 = load_grayscale("data/original/image2_edges.png")
     for a in (i1, i2):
         assert a.dtype == np.float64 and a.shape == (256, 256)
     d1 = np.abs(np.diff(i1, axis=0)).max(), np.abs(np.diff(i1, axis=1)).max()
@@ -79,9 +79,9 @@ def test_images_smooth_vs_edges():
 
 
 def test_tn1_masks_fixed():
-    specs = [("mask_2x50.npy", 100, (slice(127, 129), slice(103, 153))),
-             ("mask_10x10.npy", 100, (slice(123, 133), slice(123, 133))),
-             ("mask_30x30.npy", 900, (slice(113, 143), slice(113, 143)))]
+    specs = [("mask_scratch_2x50.npy", 100, (slice(127, 129), slice(103, 153))),
+             ("mask_sq_10x10.npy", 100, (slice(123, 133), slice(123, 133))),
+             ("mask_sq_30x30.npy", 900, (slice(113, 143), slice(113, 143)))]
     for name, n, region in specs:
         m = np.load(f"data/masks/{name}")
         assert m.dtype == np.uint8 and m.shape == (256, 256)
