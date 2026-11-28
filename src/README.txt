@@ -1,3 +1,5 @@
-laplace_model.py: Trích xuất danh sách tọa độ unknown_pixels, lắp ráp ma trận hệ số thưa A (dạng CSR) và vế phải b từ quy tắc trung bình 4 lân cận, khởi tạo x_0 và giải nghiệm tham chiếu bằng spsolve.
-gauss_seidel.py: Cài đặt thuật toán lặp Gauss–Seidel cập nhật trực tiếp trên cấu trúc mảng CSR (indptr, indices, data), trả về nghiệm x, số bước lặp, lịch sử phần dư và hội tụ.
-evaluation.py: Cung cấp các hàm tính phần dư tương đối theo chuẩn vô cùng, độ lệch so với nghiệm tham chiếu spsolve, và các chỉ số MSE_mask, PSNR_mask chỉ tính trên vùng khuyết.
+image_processing.py: Đọc ảnh grayscale float64, ghép nghiệm an toàn trên bản sao copy(), và lưu ảnh PNG uint8.
+mask.py: Sinh mặt nạ vuông và vết xước chữ nhật (0 = đã biết, 1 = bị khuyết) có kiểm tra biên cách mép >= 1 pixel.
+laplace_model.py: Trích xuất unknown_pixels, lắp ráp ma trận thưa A (CSR) và vector b, khởi tạo x0 và giải nghiệm tham chiếu spsolve.
+gauss_seidel.py: Cài đặt thuật toán lặp Gauss-Seidel trực tiếp trên mảng CSR (indptr, indices, data).
+evaluation.py: Tính phần dư tương đối, sai số so với spsolve, MSE_mask/PSNR_mask trên vùng khuyết và benchmark thời gian trung vị.

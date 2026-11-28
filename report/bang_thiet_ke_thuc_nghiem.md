@@ -1,35 +1,50 @@
 # BẢNG THIẾT KẾ PHƯƠNG ÁN THỰC NGHIỆM (MỐC BẮT BUỘC TUẦN 2)
-**Học phần: Phương pháp tính (Hướng B)**  
-**Nhóm sinh viên: An (Nhóm trưởng), Giáp, Sơn, Hiếu**  
-**Người phụ trách chính TN1 & TN3: Giáp | Phụ trách TN2: Hiếu**
+**Học phần:** Phương pháp tính (Hướng B)  
+**Nhóm sinh viên:** An (Nhóm trưởng), Giáp, Sơn, Hiếu  
+**Phụ trách thực nghiệm:** Giáp (TN1, TN3) | Hiếu (TN2, điều phối Notebook) | Sơn (Dữ liệu, Ảnh 2) | An (Kiểm soát mô hình & rà soát chéo)
 
 ---
 
-## 1. Mục tiêu và Câu hỏi nghiên cứu thực nghiệm
+## 1. Câu hỏi nghiên cứu và Phương pháp đối chứng
 - **Câu hỏi nghiên cứu:** Hình dạng/kích thước vùng khuyết, phương thức khởi tạo $x^{(0)}$ và ngưỡng dừng $TOL$ ảnh hưởng thế nào đến tốc độ hội tụ, chi phí tính toán và chất lượng ảnh khôi phục của phương pháp Gauss–Seidel trên ma trận thưa CSR?
-- **Phương pháp số cốt lõi:** Phương pháp lặp Gauss–Seidel tự cài đặt trên định dạng CSR.
-- **Nghiệm đối chứng:** Nghiệm trực tiếp từ `scipy.sparse.linalg.spsolve`.
+- **Bộ giải nghiên cứu chính:** Phương pháp lặp Gauss–Seidel tự cài đặt trực tiếp trên định dạng CSR (`src/gauss_seidel.py`).
+- **Nghiệm tham chiếu kiểm chứng:** `scipy.sparse.linalg.spsolve` (chỉ dùng để tính sai số đại số $e_{ref} = \|x^{(k)} - x_{ref}\|_\infty$, không phải thuật toán nghiên cứu thứ hai).
 
 ---
 
 ## 2. Thiết kế chi tiết 3 Kịch bản Thực nghiệm
 
-| Thí nghiệm | Mục đích khảo sát | Biến độc lập (Khảo sát) | Tham số cố định (Kiểm soát) | Chỉ số đo lường (Đầu ra) | Giả thuyết đối chiếu lý thuyết |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **TN1: Hình dạng & Kích thước vùng khuyết** *(Giáp chủ trì)* | Đánh giá ảnh hưởng của hình học miền khuyết đến tốc độ hội tụ | 3 loại mask:<br>1. Vết xước mảnh $2 \times 50$ ($n=100$)<br>2. Hình vuông $10 \times 10$ ($n=100$)<br>3. Hình vuông $30 \times 30$ ($n=900$) | - Ảnh: Ảnh 1 (nền mượt)<br>- Khởi tạo: $x^{(0)} = \text{boundary\_mean}$<br>- $TOL = 10^{-4}$<br>- $max\_iter = 10000$ | - Số vòng lặp hội tụ<br>- Thời gian (trung vị 5 lần đo)<br>- Phần dư tương đối $r_{rel}$<br>- $MSE_{mask}$, $PSNR_{mask}$ | - Mask $2 \times 50$ hội tụ nhanh hơn $10 \times 10$ vì 100% pixel chạm biên đã biết.<br>- Mask $30 \times 30$ hội tụ chậm hơn rõ rệt vì bán kính phổ $\rho(T_{GS}) = \cos^2\left(\frac{\pi}{m+1}\right)$ tiến gần 1 khi $m$ tăng. |
-| **TN2: Phương thức khởi tạo vector $x^{(0)}$** *(Hiếu chủ trì)* | Khảo sát vai trò của điểm xuất phát đến số vòng lặp | 3 chế độ khởi tạo:<br>1. `zero` (vector 0)<br>2. `random` (seed=42, miền $[0, 255]$)<br>3. `boundary_mean` (trung bình pixel biên đã biết) | - Ảnh: Ảnh 1<br>- Mask: Vuông $10 \times 10$<br>- $TOL = 10^{-4}$<br>- $max\_iter = 10000$ | - Số vòng lặp hội tụ<br>- Lịch sử hội tụ phần dư qua từng vòng lặp<br>- Sai số với nghiệm chuẩn: $\|x - x_{ref}\|_{\infty}$ | - Cả 3 cách chắc chắn hội tụ về cùng 1 nghiệm duy nhất do ma trận $A$ đối xứng xác định dương.<br>- `boundary_mean` hội tụ nhanh nhất do khoảng cách ban đầu $\|x^{(0)} - x^*\|$ nhỏ nhất. |
-| **TN3: Ngưỡng dung sai dừng $TOL$** *(Giáp chủ trì)* | Khảo sát sự đánh đổi giữa chi phí tính toán và chất lượng ảnh | 4 mức dung sai:<br>$TOL \in \{10^{-2}, 10^{-3}, 10^{-4}, 10^{-5}\}$ | - Ảnh: Ảnh 1<br>- Mask: Vuông $10 \times 10$<br>- Khởi tạo: $x^{(0)} = \text{boundary\_mean}$<br>- $max\_iter = 10000$ | - Số vòng lặp hội tụ<br>- Sai số giải hệ $e_{ref} = \|x - x_{ref}\|_{\infty}$<br>- $MSE_{mask}$, $PSNR_{mask}$ | - Số vòng lặp tăng tuyến tính theo $-\log_{10}(TOL)$.<br>- $MSE_{mask}$ và $PSNR_{mask}$ sẽ bão hòa ở một ngưỡng nhất định vì chạm giới hạn sai số bản chất của mô hình Laplace 4 lân cận. |
+| Thí nghiệm | Biến khảo sát & Tham số cố định | Chỉ số thu thập (xuất CSV) | Hệ quả lý thuyết (Chắc chắn) | Giả thuyết thực nghiệm (Chờ số liệu kiểm chứng) |
+| :--- | :--- | :--- | :--- | :--- |
+| **TN1: Hình dạng & Kích thước vùng khuyết** *(Giáp chủ trì)* | **Biến đổi:** 3 mask cố định `.npy`: vết xước $2 \times 50$ ($n=100$), vuông $10 \times 10$ ($n=100$), vuông $30 \times 30$ ($n=900$).<br>**Cố định:** Ảnh 1 (`image1_smooth.png`), `boundary_mean`, $TOL = 10^{-4}$, `max_iter = 10000`. | Số vòng lặp, thời gian chạy (trung vị 5 lần), $r_{rel}$, $e_{ref}$, $MSE_{mask}$, $PSNR_{mask}$. | Ở mask $2 \times 50$, 100% pixel khuyết chạm biên đã biết. Với lưới vuông $m \times m$, bán kính phổ $\rho(T_{GS}) = \cos^2\left(\frac{\pi}{m+1}\right)$ tiến sát 1 khi $m$ tăng từ 10 lên 30. | **Dự kiến** mask mảnh $2 \times 50$ hội tụ nhanh hơn đáng kể so với mask vuông $10 \times 10$ cùng diện tích, và vùng vuông $30 \times 30$ chậm hơn rõ rệt so với $10 \times 10$; mức chênh lệch cụ thể do số liệu thực tế quyết định. |
+| **TN2: Giá trị khởi tạo $x^{(0)}$** *(Hiếu chủ trì)* | **Biến đổi:** `zero`, `random` (`seed=42`, miền $[0, 255]$), `boundary_mean`.<br>**Cố định:** Ảnh 1, mask vuông $10 \times 10$, $TOL = 10^{-4}$, `max_iter = 10000`. | Số vòng lặp, thời gian chạy (trung vị 5 lần), $r_{rel}$, $e_{ref}$, $MSE_{mask}$, $PSNR_{mask}$, lịch sử phần dư theo vòng lặp. | Vì $A$ đối xứng xác định dương nên cả 3 phương thức khởi tạo chắc chắn hội tụ về cùng một nghiệm duy nhất $x^*$. | **Dự kiến** `boundary_mean` cần ít vòng lặp hơn nhờ khoảng cách ban đầu $\|x^{(0)} - x^*\|$ nhỏ hơn; mức độ rút ngắn cụ thể được kiểm chứng bằng số liệu chạy thực tế. |
+| **TN3: Ngưỡng dừng $TOL$** *(Giáp chủ trì)* | **Biến đổi:** $TOL \in \{10^{-2}, 10^{-3}, 10^{-4}, 10^{-5}\}$ (truyền tường minh `tol=current_tol`).<br>**Cố định:** Ảnh 1, mask vuông $10 \times 10$, `boundary_mean`, `max_iter = 10000`. | Số vòng lặp, thời gian chạy (trung vị 5 lần), $r_{rel}$, $e_{ref}$, $MSE_{mask}$, $PSNR_{mask}$. *(Kiểm tra thêm mask $30 \times 30$ ở $TOL = 10^{-5}$).* | Khi giảm $TOL$, số vòng lặp tăng tuyến tính theo $-\log_{10}(TOL)$ và sai số đại số $e_{ref}$ giảm đơn điệu. | **Dự kiến** $MSE_{mask}$ và $PSNR_{mask}$ sẽ bão hòa từ một ngưỡng $TOL$ nhất định vì chạm giới hạn sai số của mô hình nội suy 4 lân cận; mốc bão hòa cụ thể để số liệu thực tế trả lời. |
 
 ---
 
-## 3. Thí nghiệm kiểm chứng bổ sung (Validation on Image 2)
-- **Cấu hình chuẩn:** Chạy lại cấu hình chuẩn (Mask $10 \times 10$, $x^{(0)} = \text{boundary\_mean}$, $TOL = 10^{-4}$) trên **Ảnh 2 (ảnh có nhiều cạnh sắc nét)**.
-- **Giả thuyết kiểm chứng:** Tốc độ hội tụ đại số (số vòng lặp) trên Ảnh 2 sẽ tương đương Ảnh 1 vì ma trận $A$ chỉ phụ thuộc hình học mask, nhưng $PSNR_{mask}$ trên vùng cạnh sắc nét sẽ thấp hơn vùng mượt do tính chất làm phẳng tự nhiên của phương trình Laplace.
+## 3. Kiểm chứng bổ sung trên Ảnh 2 (nhiều cạnh sắc nét)
+- **Cấu hình chuẩn:** Mask vuông $10 \times 10$ (`mask_sq_10x10.npy`), `x0 = boundary_mean`, $TOL = 10^{-4}$, `max_iter = 10000` trên `image2_edges.png`, đối chiếu trực tiếp với Ảnh 1.
+- **Hệ quả lý thuyết:** Ma trận $A$ chỉ phụ thuộc hình học của mask nên tốc độ hội tụ đại số không phụ thuộc nội dung ảnh.
+- **Giả thuyết thực nghiệm:** **Dự kiến** số vòng lặp trên Ảnh 2 tương đương Ảnh 1, nhưng $PSNR_{mask}$ trên vùng có cạnh sắc nét sẽ thấp hơn vùng nền mượt do tính chất làm trơn của mô hình Laplace.
 
 ---
 
 ## 4. Quy ước kỹ thuật và Kiểm soát sai số
-1. **Đo thời gian:** Chỉ dùng `time.perf_counter()` bọc quanh hàm `gauss_seidel`, thực hiện 5 lần liên tiếp trên cùng dữ liệu và lấy giá trị **trung vị (median)**.
-2. **Không ghi đè ảnh gốc:** Bắt buộc sử dụng `.copy()` trước khi điền nghiệm tái tạo.
-3. **Phạm vi đánh giá:** Chỉ tính $MSE$ và $PSNR$ trên tập hợp các pixel bị khuyết ($mask == 1$).
-4. **Cố định tái lập:** Cố định `seed=42` và lưu file mask chuẩn `.npy` trước khi chạy.
+1. **Đo thời gian:** Dùng `time.perf_counter()` chỉ bọc riêng hàm `gauss_seidel`, chạy lặp 5 lần trên cùng dữ liệu/cùng $x^{(0)}$ và lấy **trung vị (median)**.
+2. **Không ghi đè ảnh gốc:** Hàm `restore_pixels` bắt buộc tạo bản sao `float64` trước khi điền nghiệm.
+3. **Phạm vi đánh giá ảnh:** Chỉ tính $MSE_{mask}$ và $PSNR_{mask}$ trên vùng pixel bị khuyết (`mask == 1`) trực tiếp trên mảng `float64` trước khi ép `uint8`.
+4. **Cố định tái lập:** Cố định `seed = 42` và lưu cố định các ma trận mask `.npy` trong `data/masks/` trước khi chạy thực nghiệm.
+
+---
+
+## 5. Thông số môi trường thực nghiệm (Ghi nhận chuẩn hóa)
+*(Cập nhật lại nếu ở Tuần 4 nhóm chốt chạy số liệu chính thức trên máy khác)*
+
+| Hạng mục | Thông số ghi nhận |
+| :--- | :--- |
+| Hệ điều hành | Windows 11 (AMD64) |
+| CPU | Intel64 Family 6 Model 186 Stepping 2, GenuineIntel (16 luồng) |
+| RAM | 15.69 GB |
+| Python | 3.12.10 |
+| NumPy / SciPy | 2.5.5 / 1.18.1 |
+| Pillow / Matplotlib | 13.0.0 / 3.11.2 |

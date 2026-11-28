@@ -8,6 +8,8 @@ def build_system(image: np.ndarray, mask: np.ndarray) -> tuple:
 
     Trả về: (A_csr, b, unknown_pixels)
     """
+    if image.ndim != 2 or mask.ndim != 2:
+        raise ValueError("image và mask phải là mảng 2 chiều.")
     if image.shape != mask.shape:
         raise ValueError("image và mask phải có cùng kích thước.")
     if not np.isin(mask, [0, 1]).all():
@@ -59,6 +61,8 @@ def make_initial_guess(
     seed: int = 42,
 ) -> np.ndarray:
     """Khởi tạo vector x0 kích thước n theo 3 chế độ: 'zero', 'random', 'boundary_mean'."""
+    if image.ndim != 2 or mask.ndim != 2:
+        raise ValueError("image và mask phải là mảng 2 chiều.")
     if image.shape != mask.shape:
         raise ValueError("image và mask phải có cùng kích thước.")
     n = len(unknown_pixels)

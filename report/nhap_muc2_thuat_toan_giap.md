@@ -25,7 +25,7 @@ Trong bài toán Laplace của chúng ta, các phần tử đường chéo chín
 3. **Tính chéo trội:**
    - Tại các pixel khuyết nằm sâu bên trong (có đủ 4 lân cận khuyết): $|a_{ii}| = 4 = \sum_{j \ne i} |a_{ij}| = 4$ (chéo trội yếu).
    - Tại các pixel khuyết tiếp giáp biên đã biết (có ít nhất 1 lân cận nguyên vẹn): $|a_{ii}| = 4 > \sum_{j \ne i} |a_{ij}| \le 3$ (chéo trội ngặt).
-   - Do đồ thị liên thông giữa các pixel khuyết luôn dẫn ra biên, ma trận $A$ là ma trận chéo trội không suy biến (irreducibly diagonally dominant).
+   - Do đồ thị liên thông giữa các pixel khuyết luôn dẫn ra biên, ma trận $A$ là ma trận chéo trội không khả quy (irreducibly diagonally dominant).
 
 **Định lý hội tụ:** Khi ma trận $A$ đối xứng và xác định dương (Symmetric Positive Definite - SPD), phương pháp lặp Gauss–Seidel **chắc chắn hội tụ về nghiệm giải tích duy nhất** $x^* = A^{-1}b$ với mọi vector khởi tạo ban đầu $x^{(0)} \in \mathbb{R}^n$.
 
